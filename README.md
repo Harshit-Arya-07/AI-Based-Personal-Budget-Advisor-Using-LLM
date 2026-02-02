@@ -1,4 +1,5 @@
 📊 AI Personal Budget Advisor using LLM
+
 🧠 About the Project 
 
 The AI Personal Budget Advisor is an educational, AI-powered application designed to help users manage their personal finances more effectively. The system allows users to enter their monthly income and expenses, analyzes spending patterns using basic financial rules, and provides clear, conversational guidance through a Large Language Model (LLM).
