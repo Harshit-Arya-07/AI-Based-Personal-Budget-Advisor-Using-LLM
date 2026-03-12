@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-size: 16px;
+  --background: #F7F8FA;
+  --foreground: #0F1729;
+  --card: #FFFFFF;
+  --card-foreground: #0F1729;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F1729;
+  --primary: #0B1A3E;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8ECF4;
+  --secondary-foreground: #0B1A3E;
+  --muted: #EDF0F7;
+  --muted-foreground: #64748B;
+  --accent: #E8ECF4;
+  --accent-foreground: #0B1A3E;
+  --destructive: #DC3545;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: transparent;
+  --input-background: #F1F5F9;
+  --switch-background: #CBD5E1;
+  --ring: #4F6EF7;
+  --chart-1: #4F6EF7;
+  --chart-2: #10B981;
+  --chart-3: #0B1A3E;
+  --chart-4: #F59E0B;
+  --chart-5: #8B5CF6;
+  --radius: 0.625rem;
+  
+  /* Fintech color system */
+  --success: #10B981;
+  --success-foreground: #FFFFFF;
+  --warning: #F59E0B;
+  --warning-foreground: #FFFFFF;
+  --info: #4F6EF7;
+  --info-foreground: #FFFFFF;
+}
+
+.dark {
+  --background: #0A0F1E;
+  --foreground: #E8ECF4;
+  --card: #111827;
+  --card-foreground: #E8ECF4;
+  --popover: #111827;
+  --popover-foreground: #E8ECF4;
+  --primary: #4F6EF7;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1E293B;
+  --secondary-foreground: #E8ECF4;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --accent: #1E293B;
+  --accent-foreground: #E8ECF4;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #4F6EF7;
+  --chart-1: #4F6EF7;
+  --chart-2: #10B981;
+  --chart-3: #8B5CF6;
+  --chart-4: #F59E0B;
+  --chart-5: #EC4899;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: var(--font-size);
+}
