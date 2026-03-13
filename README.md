@@ -1,226 +1,161 @@
-# BudgetAI - Migrated Architecture
+# BudgetAI
 
-A modern fintech budget tracking application with AI-powered insights, built with Next.js and Express.
+AI-powered personal finance companion that helps users track expenses, analyze spending behavior, and get actionable budgeting guidance through a modern dashboard + chat assistant.
 
-## Tech Stack
+---
+
+## ✨ Highlights
+
+- 📊 Smart dashboard for income, expenses, trends, and health score
+- 🤖 AI insights + conversational finance assistant (Gemini)
+- 🎯 Savings goals and monthly progress tracking
+- 🔐 Firebase Authentication + Firestore user-scoped data model
+- 📱 Responsive UI with dashboard pages for analytics, history, profile, and settings
+
+---
+
+## 🧱 Tech Stack
 
 ### Frontend
-- **Framework**: Next.js 14 (App Router)
-- **UI**: React 18 with Tailwind CSS
-- **Animations**: Framer Motion
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **Toasts**: Sonner
-- **Auth**: Firebase Client SDK
+- Next.js 14 (App Router)
+- React 18 + TypeScript
+- Tailwind CSS
+- Framer Motion
+- Recharts
+- Firebase Client SDK
 
 ### Backend
-- **Runtime**: Node.js with Express
-- **Database**: Firebase Firestore
-- **Auth**: Firebase Admin SDK
-- **AI**: Google Gemini 1.5 Flash
+- Node.js + Express
+- Firebase Admin SDK
+- Firestore
+- Google Gemini API
 
-## Project Structure
+---
 
-```
-migrated/
-├── backend/                    # Express API server
+## 📂 Project Structure
+
+```bash
+BudgetAI/
+├── backend/
 │   ├── src/
 │   │   ├── config/
-│   │   │   ├── firebaseAdmin.js    # Firebase Admin init
-│   │   │   └── gemini.js           # Gemini AI config
 │   │   ├── controllers/
-│   │   │   └── budgetController.js # All API handlers
 │   │   ├── middleware/
-│   │   │   └── authMiddleware.js   # Firebase token verification
 │   │   ├── routes/
-│   │   │   └── budgetRoutes.js     # API routes
-│   │   ├── services/
-│   │   │   ├── firestoreService.js # Firestore CRUD operations
-│   │   │   └── financeService.js   # Financial calculations
-│   │   ├── app.js                  # Express app setup
-│   │   └── server.js               # Server entry point
+│   │   └── services/
 │   └── package.json
-│
-└── frontend/                   # Next.js frontend
+└── frontend/
     ├── app/
-    │   ├── (dashboard)/        # Protected route group
-    │   │   ├── dashboard/
-    │   │   ├── expenses/
-    │   │   ├── analytics/
-    │   │   ├── history/
-    │   │   ├── ai-chat/
-    │   │   ├── profile/
-    │   │   └── layout.tsx      # Dashboard layout with auth
-    │   ├── page.tsx            # Login page
-    │   ├── layout.tsx          # Root layout
-    │   └── globals.css         # Global styles
     ├── components/
-    │   ├── Sidebar.tsx
-    │   ├── BottomNav.tsx
-    │   ├── BalanceCard.tsx
-    │   ├── AIInsights.tsx
-    │   ├── Analytics.tsx
-    │   ├── ExpenseTracker.tsx
-    │   ├── RecentTransactions.tsx
-    │   ├── FinancialHealthScore.tsx
-    │   ├── BurnRateProjection.tsx
-    │   ├── CategoryTrendWarnings.tsx
-    │   ├── SavingsGoals.tsx
-    │   ├── WhatIfSimulator.tsx
-    │   ├── AIChat.tsx
-    │   └── Profile.tsx
     ├── lib/
-    │   ├── types.ts            # TypeScript types
-    │   ├── firebase.ts         # Firebase client init
-    │   ├── api.ts              # API client functions
-    │   ├── financialHealth.ts  # Health score calculation
-    │   ├── burnRateProjection.ts
-    │   ├── categoryTrends.ts
-    │   ├── savingsGoals.ts
-    │   ├── whatIfSimulator.ts
-    │   └── utils.ts
     └── package.json
 ```
 
-## Setup Instructions
+---
 
-### Prerequisites
-- Node.js 18+ 
-- Firebase project with Firestore enabled
-- Gemini API key from Google AI Studio
+## 🚀 Quick Start (Local)
 
-### 1. Backend Setup
+### 1) Prerequisites
+
+- Node.js 18+
+- Firebase project (Auth + Firestore enabled)
+- Gemini API key
+
+### 2) Backend Setup
 
 ```bash
-cd migrated/backend
-
-# Install dependencies
+cd backend
 npm install
-
-# Copy environment file
 copy .env.example .env
-
-# Edit .env with your credentials:
-# - FIREBASE_PROJECT_ID
-# - FIREBASE_PRIVATE_KEY
-# - FIREBASE_CLIENT_EMAIL
-# - GEMINI_API_KEY
-
-# Start development server
 npm run dev
 ```
 
-### 2. Frontend Setup
+Set these variables in `backend/.env`:
+
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `GEMINI_API_KEY`
+- `FRONTEND_URL`
+- `PORT` (optional)
+- `GEMINI_TIMEOUT_MS` (optional)
+
+### 3) Frontend Setup
 
 ```bash
-cd migrated/frontend
-
-# Install dependencies
+cd frontend
 npm install
-
-# Copy environment file
 copy .env.example .env.local
-
-# Edit .env.local with your credentials:
-# - NEXT_PUBLIC_API_URL (default: http://localhost:3000)
-# - NEXT_PUBLIC_FIREBASE_API_KEY
-# - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-# - NEXT_PUBLIC_FIREBASE_PROJECT_ID
-
-# Start development server
 npm run dev
 ```
 
-### 3. Firebase Configuration
+Set these variables in `frontend/.env.local`:
 
-1. Go to Firebase Console > Project Settings
-2. Under "Service accounts", generate a new private key for backend
-3. Under "General" > "Your apps", get the web config for frontend
-4. Enable Google Authentication in Firebase Console > Authentication
-5. Set up Firestore rules:
+- `NEXT_PUBLIC_BACKEND_URL` (example: `http://localhost:3000`)
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      match /expenses/{expenseId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      match /goals/{goalId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      match /budgets/{budgetId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-    }
-  }
-}
-```
+### 4) Run App
 
-## API Endpoints
+- Frontend: `http://localhost:3001`
+- Backend health: `http://localhost:3000/health`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/budget/profile` | Get user profile |
-| PUT | `/api/budget/profile` | Update user settings |
-| GET | `/api/budget/expenses` | Get all expenses |
-| POST | `/api/budget/expenses` | Add new expense |
-| DELETE | `/api/budget/expenses/:id` | Delete expense |
-| GET | `/api/budget/goals` | Get savings goals |
-| POST | `/api/budget/goals` | Add new goal |
-| DELETE | `/api/budget/goals/:id` | Delete goal |
-| GET | `/api/budget/history` | Get expense history |
-| GET | `/api/budget/budgets` | Get monthly budget |
-| POST | `/api/budget/analyze` | AI financial analysis |
-| POST | `/api/budget/chat` | AI chat assistant |
+---
 
-## Features
+## 🌐 Deployment (Recommended)
 
-- 🔐 **Secure Authentication**: Google Sign-In with Firebase
-- 💰 **Expense Tracking**: Add, view, and delete expenses
-- 📊 **Analytics**: Visual spending breakdowns with charts
-- 🎯 **Savings Goals**: Track progress towards financial goals
-- 🤖 **AI Insights**: Gemini-powered financial analysis
-- 💬 **AI Chat**: Ask questions about your finances
-- 📈 **Financial Health**: Score and recommendations
-- 🔥 **Burn Rate**: Spending projection analysis
-- ⚠️ **Spending Alerts**: Category trend warnings
-- 🔮 **What-If Simulator**: Scenario planning tool
+- **Frontend:** Vercel
+- **Backend:** Render
 
-## Design System
+### Backend (Render)
+- Root directory: `backend`
+- Build command: `npm install`
+- Start command: `npm start`
+- Add backend env vars
 
-### Colors
-- **Primary Navy**: `#0B1A3E`
-- **Indigo**: `#4F6EF7`
-- **Purple**: `#8B5CF6`
-- **Success**: `#10B981`
-- **Warning**: `#F59E0B`
-- **Destructive**: `#DC3545`
+### Frontend (Vercel)
+- Root directory: `frontend`
+- Framework: Next.js
+- Set `NEXT_PUBLIC_BACKEND_URL` to your Render URL
 
-### Typography
-- Font: System font stack (SF Pro, Inter, etc.)
-- Heading weights: 600-700
-- Body weights: 400-500
+---
 
-## Development
+## 🔌 Core API Routes
 
-```bash
-# Run both frontend and backend
-# Terminal 1 (Backend):
-cd migrated/backend && npm run dev
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | Health check |
+| GET/POST/DELETE | `/api/budget/expenses` | Expense management |
+| GET/POST/DELETE | `/api/budget/goals` | Goals management |
+| GET | `/api/budget/history` | Expense history |
+| POST | `/api/budget/analyze` | AI analysis |
+| POST | `/api/budget/chat/send` | AI chat response |
+| GET/DELETE | `/api/budget/chat/history` | Chat history |
+| GET/PUT | `/api/budget/chat/personality` | AI personality mode |
 
-# Terminal 2 (Frontend):
-cd migrated/frontend && npm run dev
-```
+---
 
-Frontend runs on `http://localhost:3001`
-Backend runs on `http://localhost:3000`
+## 🛡️ Security Notes
 
-## License
+- Never commit `.env` files.
+- Rotate keys immediately if exposed (Firebase service account, Gemini API key).
+- Keep Firebase Auth authorized domains updated for deployed frontend URLs.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+---
+
+## 📄 License
 
 MIT
