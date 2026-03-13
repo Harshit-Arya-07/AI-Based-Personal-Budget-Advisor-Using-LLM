@@ -64,7 +64,7 @@ export default function SavingsGoals({ goals, expenses, settings, isLoading }: S
       if (!user) throw new Error('Not authenticated');
 
       const token = await getIdToken(user);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/goals`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/goals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export default function SavingsGoals({ goals, expenses, settings, isLoading }: S
       if (!user) throw new Error('Not authenticated');
 
       const token = await getIdToken(user);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/goals/${goalId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/goals/${goalId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

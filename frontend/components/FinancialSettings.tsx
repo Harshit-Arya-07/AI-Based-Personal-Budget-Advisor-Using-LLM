@@ -44,7 +44,7 @@ export default function FinancialSettings({ settings, isLoading }: FinancialSett
       if (!currentUser) throw new Error('Not authenticated');
 
       const token = await getIdToken(currentUser);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/profile`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

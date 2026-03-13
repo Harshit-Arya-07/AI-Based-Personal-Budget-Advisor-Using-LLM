@@ -107,7 +107,7 @@ export default function SpendingPersonality({ isLoadingExpenses }: SpendingPerso
       if (!user) throw new Error('Not authenticated');
 
       const token = await getIdToken(user);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/personality`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/personality`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -115,7 +115,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
   const loadChatHistory = async () => {
     try {
       const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history?limit=20`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history?limit=20`, {
         headers,
       });
       if (response.ok) {
@@ -145,7 +145,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
   const loadQuickSuggestions = async () => {
     try {
       const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/suggestions`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/suggestions`, {
         headers,
       });
       if (response.ok) {
@@ -161,7 +161,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
   const loadPersonalityMode = async () => {
     try {
       const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
         headers,
       });
       if (response.ok) {
@@ -176,7 +176,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
   const updatePersonalityMode = async (mode: string) => {
     try {
       const headers = await getAuthHeaders();
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
         method: 'PUT',
         headers,
         body: JSON.stringify({ mode }),
@@ -205,7 +205,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
 
     try {
       const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/send`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/send`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ message: text.trim() }),
@@ -274,7 +274,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
   const clearChat = async () => {
     try {
       const headers = await getAuthHeaders();
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history`, {
         method: 'DELETE',
         headers,
       });

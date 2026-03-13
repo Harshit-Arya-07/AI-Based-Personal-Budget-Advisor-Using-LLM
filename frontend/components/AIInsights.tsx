@@ -62,7 +62,7 @@ export default function AIInsights({ expenses, monthlyIncome, isLoadingExpenses 
       if (!user) throw new Error('Not authenticated');
 
       const token = await getIdToken(user);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/budget/analyze`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
