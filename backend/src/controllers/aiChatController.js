@@ -84,7 +84,7 @@ export async function sendChatMessage(req, res) {
     } catch (aiError) {
       console.error('AI generation error:', aiError.message);
       console.error('Full error:', aiError);
-      aiResponse = getFallbackResponse(aiError);
+      aiResponse = getFallbackResponse(aiError, financialContext, message.trim());
     }
 
     // Save AI response
@@ -107,7 +107,7 @@ export async function sendChatMessage(req, res) {
     console.error('Chat error:', error);
     res.status(500).json({
       error: 'Failed to process chat message',
-      response: getFallbackResponse(error),
+      response: getFallbackResponse(error, null, req.body?.message || ''),
     });
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Send,
@@ -18,8 +18,7 @@ import {
   Zap,
   ChevronDown,
 } from 'lucide-react';
-import { getIdToken } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { authedDelete, authedGet, authedPost, authedPut } from '@/lib/api';
 import type { ExpenseItem } from '@/lib/types';
 
 interface AIChatProps {
@@ -102,39 +101,23 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
     init();
   }, []);
 
-  const getAuthHeaders = useCallback(async () => {
-    const user = auth.currentUser;
-    if (!user) throw new Error('Not authenticated');
-    const token = await getIdToken(user);
-    return {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    };
-  }, []);
-
   const loadChatHistory = async () => {
     try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history?limit=20`, {
-        headers,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.messages?.length > 0) {
-          setMessages(
-            data.messages.map((m: any) => ({
-              id: m.id || Date.now().toString(),
-              role: m.role,
-              content: m.message,
-              timestamp: new Date(m.timestamp),
-              metadata: m.metadata,
-            }))
-          );
-          // Set mood from last assistant message
-          const lastAssistant = data.messages.find((m: any) => m.role === 'assistant');
-          if (lastAssistant?.metadata?.financialMood) {
-            setFinancialMood(lastAssistant.metadata.financialMood);
-          }
+      const data = await authedGet('/api/budget/chat/history?limit=20');
+      if (data.messages?.length > 0) {
+        setMessages(
+          data.messages.map((m: any) => ({
+            id: m.id || Date.now().toString(),
+            role: m.role,
+            content: m.message,
+            timestamp: new Date(m.timestamp),
+            metadata: m.metadata,
+          }))
+        );
+        // Set mood from last assistant message
+        const lastAssistant = data.messages.find((m: any) => m.role === 'assistant');
+        if (lastAssistant?.metadata?.financialMood) {
+          setFinancialMood(lastAssistant.metadata.financialMood);
         }
       }
     } catch (err) {
@@ -144,14 +127,8 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
 
   const loadQuickSuggestions = async () => {
     try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/suggestions`, {
-        headers,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setQuickReplies(data.suggestions || []);
-      }
+      const data = await authedGet('/api/budget/chat/suggestions');
+      setQuickReplies(data.suggestions || []);
     } catch (err) {
       console.error('Failed to load suggestions:', err);
       setQuickReplies(['How am I doing?', 'Where can I save?', 'Review my goals']);
@@ -160,14 +137,8 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
 
   const loadPersonalityMode = async () => {
     try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
-        headers,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setPersonalityMode(data.personalityMode || 'friendly');
-      }
+      const data = await authedGet('/api/budget/chat/personality');
+      setPersonalityMode(data.personalityMode || 'friendly');
     } catch (err) {
       console.error('Failed to load personality mode:', err);
     }
@@ -175,12 +146,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
 
   const updatePersonalityMode = async (mode: string) => {
     try {
-      const headers = await getAuthHeaders();
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/personality`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ mode }),
-      });
+      await authedPut('/api/budget/chat/personality', { mode });
       setPersonalityMode(mode);
       setShowPersonalitySelector(false);
     } catch (err) {
@@ -204,22 +170,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
     setError(null);
 
     try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/send`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ message: text.trim() }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        if (response.status === 429) {
-          throw new Error(`Rate limited. Please wait ${Math.ceil(err.retryAfter / 1000)}s`);
-        }
-        throw new Error(err.error || 'Failed to get response');
-      }
-
-      const data = await response.json();
+      const data = await authedPost('/api/budget/chat/send', { message: text.trim() });
       const aiResponse = data.response;
 
       const assistantMessage: Message = {
@@ -273,11 +224,7 @@ export default function AIChat({ expenses, monthlyIncome }: AIChatProps) {
 
   const clearChat = async () => {
     try {
-      const headers = await getAuthHeaders();
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL}/api/budget/chat/history`, {
-        method: 'DELETE',
-        headers,
-      });
+      await authedDelete('/api/budget/chat/history');
     } catch (err) {
       console.error('Failed to clear chat history:', err);
     }

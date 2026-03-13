@@ -132,10 +132,13 @@ export function checkRateLimit(uid) {
   }
 
   if (userLimit.count >= RATE_LIMIT_MAX_REQUESTS) {
-    const waitTime = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - userLimit.windowStart)) / 1000);
+    const retryAfterMs = Math.max(0, RATE_LIMIT_WINDOW_MS - (now - userLimit.windowStart));
+    const waitTime = Math.ceil(retryAfterMs / 1000);
     return {
       allowed: false,
+      retryAfter: retryAfterMs,
       retryAfterSeconds: waitTime,
+      remaining: 0,
       message: `Rate limit exceeded. Please wait ${waitTime} seconds.`,
     };
   }
@@ -144,7 +147,10 @@ export function checkRateLimit(uid) {
   userLimit.count++;
   rateLimitMap.set(uid, userLimit);
 
-  return { allowed: true };
+  return {
+    allowed: true,
+    remaining: Math.max(0, RATE_LIMIT_MAX_REQUESTS - userLimit.count),
+  };
 }
 
 /**

@@ -369,10 +369,60 @@ function validateMonthlySummary(data) {
 /**
  * Get fallback response for errors
  */
-export function getFallbackResponse(error) {
+function buildContextualFallback(financialContext, userMessage = '') {
+  const safeText = String(userMessage || '').toLowerCase();
+  const spent = Number(financialContext?.totalSpentThisMonth || 0);
+  const income = Number(financialContext?.income || 0);
+  const remaining = Number(financialContext?.remainingBudget || 0);
+  const safeDaily = Number(financialContext?.safeDailySpend || 0);
+  const health = Number(financialContext?.financialHealthScore || 0);
+  const topCategory = financialContext?.categoryBreakdown?.[0];
+
+  let reply = `I'm temporarily in backup mode, so here's a quick data-based check: you've spent $${spent.toFixed(2)} this month with about $${remaining.toFixed(2)} remaining.`;
+
+  if (safeText.includes('overspend') || safeText.includes('overspending') || financialContext?.isOverspending) {
+    reply = `You're on an overspending trajectory right now. Current spend is $${spent.toFixed(2)}${income > 0 ? ` out of $${income.toFixed(2)} income` : ''}. Try capping daily spend near $${safeDaily.toFixed(2)} and pause non-essential purchases for 3-5 days.`;
+  } else if (safeText.includes('save') || safeText.includes('goal')) {
+    reply = `To improve savings this month, keep daily spend close to $${safeDaily.toFixed(2)} and protect your remaining $${Math.max(0, remaining).toFixed(2)} budget for essentials first.`;
+  } else if (safeText.includes('spend') || safeText.includes('category')) {
+    reply = topCategory
+      ? `Your biggest spending category is ${topCategory.category} at $${Number(topCategory.amount || 0).toFixed(2)} (${Number(topCategory.percentage || 0).toFixed(1)}%). Reducing this by even 10% will improve your month-end balance.`
+      : reply;
+  }
+
+  const suggestions = [
+    'Show my top 3 categories',
+    'How much can I spend daily?',
+    'Give me a 7-day savings plan',
+  ];
+
+  return {
+    reply,
+    insight: health > 0 ? `Financial health score: ${health}/100.` : '',
+    suggestions,
+    riskLevel: financialContext?.isOverspending ? 'High' : health >= 70 ? 'Low' : 'Medium',
+    quickReplies: suggestions,
+    financialMood: financialContext?.isOverspending ? 'Risky' : health >= 70 ? 'Improving' : 'Stable',
+    moodReason: financialContext?.isOverspending ? 'Spending trend exceeds planned pace.' : 'Based on current monthly budget metrics.',
+    topRiskFactors: financialContext?.isOverspending ? ['Monthly spending pace is above safe range'] : [],
+    actionPlan: [
+      `Keep daily spending near $${safeDaily.toFixed(2)}`,
+      'Review top category and cut one non-essential expense',
+      'Check progress again in 3 days',
+    ],
+    isError: true,
+    errorType: 'ai_unavailable_fallback',
+  };
+}
+
+export function getFallbackResponse(error, financialContext = null, userMessage = '') {
   const isTimeout = error.message?.includes('Timed out');
   const isQuotaExceeded = error.message?.includes('429') || error.message?.includes('quota') || error.status === 429;
   const isApiError = error.message?.includes('API');
+
+  if (financialContext) {
+    return buildContextualFallback(financialContext, userMessage);
+  }
 
   let reply;
   if (isQuotaExceeded) {
