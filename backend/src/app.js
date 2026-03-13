@@ -7,24 +7,32 @@ import preferencesRoutes from './routes/preferencesRoutes.js';
 
 const app = express();
 
+const normalizeOrigin = (value) => String(value || '').replace(/\/+$/, '');
+
 // CORS configuration - allow multiple origins for development
 const allowedOrigins = [
   'http://localhost:3001',
   'http://127.0.0.1:3001',
   process.env.FRONTEND_URL,
-].filter(Boolean);
+]
+  .filter(Boolean)
+  .map(normalizeOrigin);
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true);
     }
+
     // In development, be more permissive
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
+
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
