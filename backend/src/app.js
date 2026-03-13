@@ -18,6 +18,15 @@ const allowedOrigins = [
   .filter(Boolean)
   .map(normalizeOrigin);
 
+const isVercelOrigin = (origin) => {
+  try {
+    const { hostname } = new URL(origin);
+    return hostname.endsWith('.vercel.app');
+  } catch {
+    return false;
+  }
+};
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc)
@@ -25,6 +34,10 @@ app.use(cors({
 
     const normalizedOrigin = normalizeOrigin(origin);
     if (allowedOrigins.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+
+    if (isVercelOrigin(normalizedOrigin)) {
       return callback(null, true);
     }
 
