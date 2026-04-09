@@ -4,7 +4,7 @@ AI-powered personal finance companion that helps users track expenses, analyze s
 
 ---
 
-## ✨ Highlights
+## ✨ Highlights 
 
 - 📊 Smart dashboard for income, expenses, trends, and health score
 - 🤖 AI insights + conversational finance assistant (Gemini)
